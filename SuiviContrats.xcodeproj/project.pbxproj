@@ -1,199 +1,195 @@
 // !$*UTF8*$!
 {
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 71;
-	objects = {
+    archiveVersion = 1;
+    classes = {
+    };
+    objectVersion = 71;
+    objects = {
 
 /* Begin PBXBuildFile section */
-		1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */; };
-		1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6058940D05DD3D006BFB54 /* ContentView.swift */; };
-		1D60589E0D05DD3D006BFB54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D6058990D05DD3D006BFB54 /* Assets.xcassets */; };
-		46FFAE263050489400C57DAC /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FFAE253050488500C57DAC /* PreviewData.swift */; };
-		46FFAE283050695E00C57DAC /* .gitignore in Sources */ = {isa = PBXBuildFile; fileRef = 46FFAE273050695500C57DAC /* .gitignore */; };
-		A1B2C3D4E5F60718293A4B5C /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* Contract.swift */; };
-		B1C2D3E4F5061728394A5B6C /* ContractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5061728394A5B6D /* ContractView.swift */; };
-		C1D2E3F405162738495A6B7C /* ContractStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F405162738495A6B7D /* ContractStore.swift */; };
+        1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */; };
+        1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6058940D05DD3D006BFB54 /* ContentView.swift */; };
+        1D60589E0D05DD3D006BFB54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D6058990D05DD3D006BFB54 /* Assets.xcassets */; };
+        46FFAE263050489400C57DAC /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FFAE253050488500C57DAC /* PreviewData.swift */; };
+        A1B2C3D4E5F60718293A4B5C /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* Contract.swift */; };
+        B1C2D3E4F5061728394A5B6C /* ContractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5061728394A5B6D /* ContractView.swift */; };
+        C1D2E3F405162738495A6B7C /* ContractStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F405162738495A6B7D /* ContractStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiviContratsApp.swift; sourceTree = "<group>"; };
-		1D6058940D05DD3D006BFB54 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		1D6058950D05DD3D006BFB54 /* SuiviContrats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuiviContrats.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1D6058970D05DD3D006BFB54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1D6058990D05DD3D006BFB54 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		46FFAE253050488500C57DAC /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
-		46FFAE273050695500C57DAC /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .gitignore; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B5D /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
-		B1C2D3E4F5061728394A5B6D /* ContractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractView.swift; sourceTree = "<group>"; };
-		C1D2E3F405162738495A6B7D /* ContractStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractStore.swift; sourceTree = "<group>"; };
+        1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiviContratsApp.swift; sourceTree = "<group>"; };
+        1D6058940D05DD3D006BFB54 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+        1D6058950D05DD3D006BFB54 /* SuiviContrats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuiviContrats.app; sourceTree = BUILT_PRODUCTS_DIR; };
+        1D6058970D05DD3D006BFB54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+        1D6058990D05DD3D006BFB54 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+        46FFAE253050488500C57DAC /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+        A1B2C3D4E5F60718293A4B5D /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
+        B1C2D3E4F5061728394A5B6D /* ContractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractView.swift; sourceTree = "<group>"; };
+        C1D2E3F405162738495A6B7D /* ContractStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		1D60588E0D05DD3D006BFB54 /* SuiviContrats */ = {
-			isa = PBXGroup;
-			children = (
-				1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */,
-				1D6058940D05DD3D006BFB54 /* ContentView.swift */,
-				46FFAE273050695500C57DAC /* .gitignore */,
-				A1B2C3D4E5F60718293A4B5D /* Contract.swift */,
-				B1C2D3E4F5061728394A5B6D /* ContractView.swift */,
-				46FFAE253050488500C57DAC /* PreviewData.swift */,
-				C1D2E3F405162738495A6B7D /* ContractStore.swift */,
-				1D6058970D05DD3D006BFB54 /* Info.plist */,
-				1D6058990D05DD3D006BFB54 /* Assets.xcassets */,
-				1D60589A0D05DD3D006BFB54 /* Products */,
-			);
-			name = SuiviContrats;
-			sourceTree = "<group>";
-		};
-		1D60589A0D05DD3D006BFB54 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1D6058950D05DD3D006BFB54 /* SuiviContrats.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
+        1D60588E0D05DD3D006BFB54 /* SuiviContrats */ = {
+            isa = PBXGroup;
+            children = (
+                1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */,
+                1D6058940D05DD3D006BFB54 /* ContentView.swift */,
+                A1B2C3D4E5F60718293A4B5D /* Contract.swift */,
+                B1C2D3E4F5061728394A5B6D /* ContractView.swift */,
+                46FFAE253050488500C57DAC /* PreviewData.swift */,
+                C1D2E3F405162738495A6B7D /* ContractStore.swift */,
+                1D6058970D05DD3D006BFB54 /* Info.plist */,
+                1D6058990D05DD3D006BFB54 /* Assets.xcassets */,
+                1D60589A0D05DD3D006BFB54 /* Products */,
+            );
+            name = SuiviContrats;
+            sourceTree = "<group>";
+        };
+        1D60589A0D05DD3D006BFB54 /* Products */ = {
+            isa = PBXGroup;
+            children = (
+                1D6058950D05DD3D006BFB54 /* SuiviContrats.app */,
+            );
+            name = Products;
+            sourceTree = "<group>";
+        };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058920D05DD3D006BFB54 /* SuiviContrats */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058980D05DD3D006BFB54 /* Build configuration list for PBXNativeTarget "SuiviContrats" */;
-			buildPhases = (
-				1D60588D0D05DD3D006BFB54 /* Sources */,
-				1D60589D0D05DD3D006BFB54 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SuiviContrats;
-			productName = SuiviContrats;
-			productReference = 1D6058950D05DD3D006BFB54 /* SuiviContrats.app */;
-			productType = "com.apple.product-type.application";
-		};
+        1D6058920D05DD3D006BFB54 /* SuiviContrats */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 1D6058980D05DD3D006BFB54 /* Build configuration list for PBXNativeTarget "SuiviContrats" */;
+            buildPhases = (
+                1D60588D0D05DD3D006BFB54 /* Sources */,
+                1D60589D0D05DD3D006BFB54 /* Resources */,
+            );
+            buildRules = (
+            );
+            dependencies = (
+            );
+            name = SuiviContrats;
+            productName = SuiviContrats;
+            productReference = 1D6058950D05DD3D006BFB54 /* SuiviContrats.app */;
+            productType = "com.apple.product-type.application";
+        };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		1D60588C0D05DD3D006BFB54 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastSwiftUpdateCheck = 1400;
-			};
-			buildConfigurationList = 1D6058960D05DD3D006BFB54 /* Build configuration list for PBXProject "SuiviContrats" */;
-			compatibilityVersion = "Xcode 16.0";
-			developmentRegion = en;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
-			);
-			mainGroup = 1D60588E0D05DD3D006BFB54 /* SuiviContrats */;
-			productRefGroup = 1D60589A0D05DD3D006BFB54 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				1D6058920D05DD3D006BFB54 /* SuiviContrats */,
-			);
-		};
+        1D60588C0D05DD3D006BFB54 /* Project object */ = {
+            isa = PBXProject;
+            attributes = {
+                LastSwiftUpdateCheck = 1400;
+            };
+            buildConfigurationList = 1D6058960D05DD3D006BFB54 /* Build configuration list for PBXProject "SuiviContrats" */;
+            compatibilityVersion = "Xcode 16.0";
+            developmentRegion = en;
+            hasScannedForEncodings = 0;
+            knownRegions = (
+                en,
+                Base,
+            );
+            mainGroup = 1D60588E0D05DD3D006BFB54 /* SuiviContrats */;
+            productRefGroup = 1D60589A0D05DD3D006BFB54 /* Products */;
+            projectDirPath = "";
+            projectRoot = "";
+            targets = (
+                1D6058920D05DD3D006BFB54 /* SuiviContrats */,
+            );
+        };
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1D60589D0D05DD3D006BFB54 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1D60589E0D05DD3D006BFB54 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+        1D60589D0D05DD3D006BFB54 /* Resources */ = {
+            isa = PBXResourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                1D60589E0D05DD3D006BFB54 /* Assets.xcassets in Resources */,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1D60588D0D05DD3D006BFB54 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */,
-				46FFAE283050695E00C57DAC /* .gitignore in Sources */,
-				1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */,
-				46FFAE263050489400C57DAC /* PreviewData.swift in Sources */,
-				A1B2C3D4E5F60718293A4B5C /* Contract.swift in Sources */,
-				B1C2D3E4F5061728394A5B6C /* ContractView.swift in Sources */,
-				C1D2E3F405162738495A6B7C /* ContractStore.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+        1D60588D0D05DD3D006BFB54 /* Sources */ = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */,
+                1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */,
+                46FFAE263050489400C57DAC /* PreviewData.swift in Sources */,
+                A1B2C3D4E5F60718293A4B5C /* Contract.swift in Sources */,
+                B1C2D3E4F5061728394A5B6C /* ContractView.swift in Sources */,
+                C1D2E3F405162738495A6B7C /* ContractStore.swift in Sources */,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		1D60589C0D05DD3D006BFB54 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H897WZWJ3D;
-				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.SuiviContrats;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				USE_HEADERMAP = NO;
-			};
-			name = Release;
-		};
-		1D60589F0D05DD3D006BFB54 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = H897WZWJ3D;
-				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.SuiviContrats;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				USE_HEADERMAP = NO;
-			};
-			name = Debug;
-		};
+        1D60589C0D05DD3D006BFB54 /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                CODE_SIGN_IDENTITY = "Apple Development";
+                CODE_SIGN_STYLE = Automatic;
+                DEVELOPMENT_TEAM = H897WZWJ3D;
+                INFOPLIST_FILE = Info.plist;
+                IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.example.SuiviContrats;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                PROVISIONING_PROFILE_SPECIFIER = "";
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                SWIFT_OPTIMIZATION_LEVEL = "-O";
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = 1;
+                UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+                USE_HEADERMAP = NO;
+            };
+            name = Release;
+        };
+        1D60589F0D05DD3D006BFB54 /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                CODE_SIGN_IDENTITY = "Apple Development";
+                CODE_SIGN_STYLE = Automatic;
+                DEVELOPMENT_TEAM = H897WZWJ3D;
+                INFOPLIST_FILE = Info.plist;
+                IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.example.SuiviContrats;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                PROVISIONING_PROFILE_SPECIFIER = "";
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = 1;
+                UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+                USE_HEADERMAP = NO;
+            };
+            name = Debug;
+        };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3D006BFB54 /* Build configuration list for PBXProject "SuiviContrats" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1D60589F0D05DD3D006BFB54 /* Debug */,
-				1D60589C0D05DD3D006BFB54 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		1D6058980D05DD3D006BFB54 /* Build configuration list for PBXNativeTarget "SuiviContrats" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1D60589F0D05DD3D006BFB54 /* Debug */,
-				1D60589C0D05DD3D006BFB54 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
+        1D6058960D05DD3D006BFB54 /* Build configuration list for PBXProject "SuiviContrats" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                1D60589F0D05DD3D006BFB54 /* Debug */,
+                1D60589C0D05DD3D006BFB54 /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+        1D6058980D05DD3D006BFB54 /* Build configuration list for PBXNativeTarget "SuiviContrats" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                1D60589F0D05DD3D006BFB54 /* Debug */,
+                1D60589C0D05DD3D006BFB54 /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
 /* End XCConfigurationList section */
-	};
-	rootObject = 1D60588C0D05DD3D006BFB54 /* Project object */;
+    };
+    rootObject = 1D60588C0D05DD3D006BFB54 /* Project object */;
 }
