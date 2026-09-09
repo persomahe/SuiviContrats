@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var store: ContractStore
     @State private var showingContracts = false
+    @State private var showingNotificationSettings = false
 
     init(store: ContractStore = ContractStore()) {
         _store = StateObject(wrappedValue: store)
@@ -94,6 +95,11 @@ struct ContentView: View {
                         } label: {
                             Label("Mes contrats", systemImage: "list.bullet.rectangle")
                         }
+                        Button {
+                            showingNotificationSettings = true
+                        } label: {
+                            Label("Gérer les notifications", systemImage: "bell.badge")
+                        }
                         Divider()
                         Text("Autres fonctionnalités à venir")
                     } label: {
@@ -106,6 +112,9 @@ struct ContentView: View {
                 NavigationView {
                     ContractView(store: store)
                 }
+            }
+            .sheet(isPresented: $showingNotificationSettings) {
+                NotificationSettingsView()
             }
         }
         .background(Color.appBackground.ignoresSafeArea())
@@ -273,9 +282,7 @@ private struct ContractDetailView: View {
         }
         .sheet(isPresented: $showingEditor) {
             ContractEditorView(contract: contract) { updatedContract in
-                if let index = store.contracts.firstIndex(where: { $0.id == updatedContract.id }) {
-                    store.contracts[index] = updatedContract
-                }
+                store.update(updatedContract)
                 showingEditor = false
             }
         }

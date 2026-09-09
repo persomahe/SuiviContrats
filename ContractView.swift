@@ -6,6 +6,15 @@ struct ContractView: View {
     @State private var showingEditor = false
     @State private var editingContract: Contract?
 
+    private var displayedContracts: [Contract] {
+        store.contracts.sorted { first, second in
+            let firstIsTerminated = first.status == "Résilié"
+            let secondIsTerminated = second.status == "Résilié"
+            if firstIsTerminated != secondIsTerminated { return !firstIsTerminated }
+            return false
+        }
+    }
+
     var body: some View {
         List {
             if store.contracts.isEmpty {
@@ -13,7 +22,7 @@ struct ContractView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "doc.text")
                             .font(.system(size: 44))
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.green)
                         Text("Aucun contrat")
                             .font(.title2.bold())
                         Text("Ajoutez votre premier contrat pour commencer le suivi.")
@@ -21,27 +30,19 @@ struct ContractView: View {
                             .foregroundColor(.secondary)
                         Button("Ajouter un contrat") { showingEditor = true }
                             .buttonStyle(.borderedProminent)
+                            .tint(.green)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 24)
                 }
             } else {
-                ForEach(store.contracts.sorted { first, second in
-                    let firstIsTerminated = first.status == "Résilié"
-                    let secondIsTerminated = second.status == "Résilié"
-
-                    if firstIsTerminated != secondIsTerminated {
-                        return !firstIsTerminated
-                    }
-
-                    return false
-                }) { contract in
+                ForEach(displayedContracts) { contract in
                     Button { editingContract = contract } label: {
                         ContractRow(contract: contract)
                     }
                     .buttonStyle(.plain)
                 }
-                .onDelete { store.contracts.remove(atOffsets: $0) }
+                .onDelete { store.delete(at: $0, from: displayedContracts) }
             }
         }
         .background(Color.appBackground.ignoresSafeArea())
@@ -62,15 +63,17 @@ struct ContractView: View {
         }
         .sheet(isPresented: $showingEditor) {
             ContractEditorView(contract: Contract()) { contract in
-                store.contracts.append(contract)
+                let isFirstContract = store.contracts.isEmpty
+                store.add(contract)
                 showingEditor = false
+                if isFirstContract {
+                    Task { await NotificationManager.shared.requestAuthorization() }
+                }
             }
         }
         .sheet(item: $editingContract) { contract in
             ContractEditorView(contract: contract) { updated in
-                if let index = store.contracts.firstIndex(where: { $0.id == updated.id }) {
-                    store.contracts[index] = updated
-                }
+                store.update(updated)
                 editingContract = nil
             }
         }
