@@ -9,7 +9,7 @@ import Foundation
 
 enum PreviewData {
     static var contractStore: ContractStore {
-        let store = ContractStore()
+        let store = ContractStore(persisted: false)
         let calendar = Calendar.current
         let today = Date()
 

@@ -2,7 +2,36 @@ import Foundation
 import Combine
 
 final class ContractStore: ObservableObject {
-    @Published var contracts: [Contract] = []
+    @Published var contracts: [Contract] = [] {
+        didSet {
+            saveContracts()
+        }
+    }
+
+    private let persistenceKey = "savedContracts"
+    private let persistsData: Bool
+
+    init(persisted: Bool = true) {
+        persistsData = persisted
+        guard persisted,
+              let data = UserDefaults.standard.data(forKey: persistenceKey),
+              let savedContracts = try? JSONDecoder().decode([Contract].self, from: data) else {
+            return
+        }
+
+        contracts = savedContracts
+        Task { @MainActor in
+            savedContracts
+                .filter { $0.status != "Résilié" }
+                .forEach { NotificationManager.shared.scheduleNotification(for: $0) }
+        }
+    }
+
+    private func saveContracts() {
+        guard persistsData,
+              let data = try? JSONEncoder().encode(contracts) else { return }
+        UserDefaults.standard.set(data, forKey: persistenceKey)
+    }
 
     func add(_ contract: Contract) {
         contracts.append(contract)
