@@ -2,15 +2,19 @@ import Foundation
 import UserNotifications
 import UIKit
 
-@MainActor
-final class NotificationManager: ObservableObject {
+final class NotificationManager: NSObject, ObservableObject {
     static let shared = NotificationManager()
 
     @Published private(set) var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
     private let center = UNUserNotificationCenter.current()
 
-    private init() {
+    private override init() {
+        super.init()
+
+        // Register as UNUserNotificationCenter delegate so notifications can be
+        // presented even when the app is in the foreground.
+        center.delegate = self
         refreshAuthorizationStatus()
     }
 
@@ -104,5 +108,15 @@ extension UNAuthorizationStatus {
         case .ephemeral: return "Notifications temporaires"
         @unknown default: return "État inconnu"
         }
+    }
+}
+
+// Allow notifications to be presented when the app is in the foreground.
+extension NotificationManager: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Show banner and play sound even when app is foregrounded.
+        completionHandler([.banner, .sound])
     }
 }

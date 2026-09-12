@@ -41,6 +41,13 @@ struct ContractView: View {
                         ContractRow(contract: contract)
                     }
                     .buttonStyle(.plain)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            delete(contract)
+                        } label: {
+                            Label("Supprimer", systemImage: "trash")
+                        }
+                    }
                 }
                 .onDelete { store.delete(at: $0, from: displayedContracts) }
             }
@@ -78,6 +85,12 @@ struct ContractView: View {
             }
         }
     }
+
+    private func delete(_ contract: Contract) {
+        if let index = displayedContracts.firstIndex(where: { $0.id == contract.id }) {
+            store.delete(at: IndexSet(integer: index), from: displayedContracts)
+        }
+    }
 }
 
 private struct ContractRow: View {
@@ -104,6 +117,13 @@ private struct ContractRow: View {
                 Text(String(format: "%.2f %@", contract.amount, contract.amountType.unit))
                     .font(.caption)
                     .foregroundColor(.secondary)
+            }
+
+            if !contract.comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Label(contract.comment, systemImage: "text.quote")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
             }
         }
         .padding(.vertical, 4)
@@ -181,6 +201,13 @@ struct ContractEditorView: View {
                     Button("Ajouter une année") { contract.annualAmounts.append(0) }
                 } header: {
                     Text("Historique des montants annuels")
+                        .foregroundColor(.purple)
+                }
+                Section {
+                    TextEditor(text: $contract.comment)
+                        .frame(minHeight: 100)
+                } header: {
+                    Text("Commentaire")
                         .foregroundColor(.purple)
                 }
             }

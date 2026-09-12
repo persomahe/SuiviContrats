@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var store: ContractStore
+    @State private var showingNewContract = false
     @State private var showingContracts = false
     @State private var showingNotificationSettings = false
 
@@ -91,6 +92,11 @@ struct ContentView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button {
+                            showingNewContract = true
+                        } label: {
+                            Label("Nouveau contrat", systemImage: "plus.circle")
+                        }
+                        Button {
                             showingContracts = true
                         } label: {
                             Label("Mes contrats", systemImage: "list.bullet.rectangle")
@@ -105,6 +111,16 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: "line.3.horizontal")
                             .accessibilityLabel("Menu")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingNewContract) {
+                ContractEditorView(contract: Contract()) { contract in
+                    let isFirstContract = store.contracts.isEmpty
+                    store.add(contract)
+                    showingNewContract = false
+                    if isFirstContract {
+                        Task { await NotificationManager.shared.requestAuthorization() }
                     }
                 }
             }

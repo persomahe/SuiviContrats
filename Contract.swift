@@ -30,12 +30,13 @@ struct Contract: Identifiable, Codable, Equatable {
     var amount: Double = 0
     var annualAmounts: [Double] = []
     var status = "Actif"
+    var comment = ""
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
         case id, name, category, provider, anniversaryDate
-        case cancellationNoticeMonths, amountType, amount, annualAmounts, status
+        case cancellationNoticeMonths, amountType, amount, annualAmounts, status, comment
     }
 
     init(from decoder: Decoder) throws {
@@ -50,10 +51,11 @@ struct Contract: Identifiable, Codable, Equatable {
         annualAmounts = try container.decodeIfPresent([Double].self, forKey: .annualAmounts) ?? []
         amount = try container.decodeIfPresent(Double.self, forKey: .amount) ?? annualAmounts.last ?? 0
         status = try container.decodeIfPresent(String.self, forKey: .status) ?? "Actif"
+        comment = try container.decodeIfPresent(String.self, forKey: .comment) ?? ""
     }
 
     static let categories = [
-        "Assurance", "Abonnement Internet", "Abonnement Musique",
+        "Assurance", "Abonnement Internet", "Abonnement Musique", "Abonnement Télé",
         "Papier identité", "Téléphonie", "Énergie", "Autre"
     ]
     static let statuses = ["Actif", "Reconduit", "Résilié"]

@@ -28,10 +28,11 @@ struct NotificationSettingsView: View {
                             notificationManager.refreshAuthorizationStatus()
                         }
                     }
+
                 } header: {
                     Text("Notifications")
                 } footer: {
-                    Text("Une alerte est programmée un mois avant le délai de résiliation, avant la date anniversaire du contrat.")
+                    Text("Une alerte est programmée un mois avant le délai de préavis de la date anniversaire du contrat.")
                 }
             }
             .navigationTitle("Gérer les notifications")
