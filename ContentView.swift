@@ -165,7 +165,7 @@ private struct ContractDashboardCard: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, minHeight: 36)
 
-            AnniversaryProgressRing(date: contract.anniversaryDate)
+            AnniversaryProgressRing(contract: contract)
 
             Text(anniversarySummary)
                 .font(.caption)
@@ -188,19 +188,49 @@ private struct ContractDashboardCard: View {
 }
 
 private struct AnniversaryProgressRing: View {
-    let date: Date
+    let contract: Contract
 
     private var progress: Double {
         let calendar = Calendar.current
         let now = Date()
+        let anniversary = contract.anniversaryDate
+        let month = calendar.component(.month, from: anniversary)
+        let day = calendar.component(.day, from: anniversary)
+        let noticeMonths = contract.cancellationNoticeMonths
+
         let currentYear = calendar.component(.year, from: now)
-        let month = calendar.component(.month, from: date)
-        let day = calendar.component(.day, from: date)
-        let thisYearDate = anniversaryDate(year: currentYear, month: month, day: day, calendar: calendar)
-        let nextDate = (thisYearDate > now) ? thisYearDate : anniversaryDate(year: currentYear + 1, month: month, day: day, calendar: calendar)
-        let previousDate = anniversaryDate(year: currentYear - (thisYearDate > now ? 1 : 0), month: month, day: day, calendar: calendar)
-        let total = max(nextDate.timeIntervalSince(previousDate), 1)
-        let remaining = max(nextDate.timeIntervalSince(now), 0)
+        let thisYearAnniversary = anniversaryDate(
+            year: currentYear,
+            month: month,
+            day: day,
+            calendar: calendar
+        )
+        let thisYearDeadline = calendar.date(
+            byAdding: .month,
+            value: -noticeMonths,
+            to: thisYearAnniversary
+        ) ?? thisYearAnniversary
+
+        let nextDeadline: Date
+        let previousDeadline: Date
+        if thisYearDeadline > now {
+            nextDeadline = thisYearDeadline
+            previousDeadline = calendar.date(
+                byAdding: .year,
+                value: -1,
+                to: thisYearDeadline
+            ) ?? thisYearDeadline
+        } else {
+            nextDeadline = calendar.date(
+                byAdding: .year,
+                value: 1,
+                to: thisYearDeadline
+            ) ?? thisYearDeadline
+            previousDeadline = thisYearDeadline
+        }
+
+        let total = max(nextDeadline.timeIntervalSince(previousDeadline), 1)
+        let remaining = max(nextDeadline.timeIntervalSince(now), 0)
         return min(max(1 - remaining / total, 0), 1)
     }
 
@@ -219,7 +249,7 @@ private struct AnniversaryProgressRing: View {
                 .trim(from: 0, to: progress)
                 .stroke(
                     AngularGradient(
-                        colors: [.green, .green, .yellow, .red],
+                        colors: [.green, .green, .yellow, .red, .red],
                         center: .center
                     ),
                     style: StrokeStyle(lineWidth: 10, lineCap: .round)
