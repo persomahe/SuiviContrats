@@ -42,11 +42,29 @@ final class NotificationManager: NSObject, ObservableObject {
 
     func scheduleNotification(for contract: Contract) {
         cancelNotification(for: contract)
-        guard contract.status != "Résilié", let alertDate = nextAlertDate(for: contract) else { return }
+        guard contract.status != "Résilié", let firstAlertDate = nextAlertDate(for: contract) else { return }
 
+        scheduleNotification(
+            for: contract,
+            at: firstAlertDate,
+            identifier: notificationIdentifier(for: contract)
+        )
+
+        // Second reminder: one week after the first one, three weeks before
+        // the contract's notice deadline.
+        if let secondAlertDate = Calendar.current.date(byAdding: .day, value: 7, to: firstAlertDate) {
+            scheduleNotification(
+                for: contract,
+                at: secondAlertDate,
+                identifier: secondNotificationIdentifier(for: contract)
+            )
+        }
+    }
+
+    private func scheduleNotification(for contract: Contract, at alertDate: Date, identifier: String) {
         let content = UNMutableNotificationContent()
         content.title = "Échéance de contrat"
-        content.body = "Le préavis de « \(contract.name) » arrive bientôt."
+        content.body = "Le préavis de « \(contract.name) » arrive bientôt. Il est temps de renégocier le contrat."
         content.sound = .default
 
         let components = Calendar.current.dateComponents(
@@ -55,7 +73,7 @@ final class NotificationManager: NSObject, ObservableObject {
         )
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         let request = UNNotificationRequest(
-            identifier: notificationIdentifier(for: contract),
+            identifier: identifier,
             content: content,
             trigger: trigger
         )
@@ -64,12 +82,19 @@ final class NotificationManager: NSObject, ObservableObject {
 
     func cancelNotification(for contract: Contract) {
         center.removePendingNotificationRequests(
-            withIdentifiers: [notificationIdentifier(for: contract)]
+            withIdentifiers: [
+                notificationIdentifier(for: contract),
+                secondNotificationIdentifier(for: contract)
+            ]
         )
     }
 
     private func notificationIdentifier(for contract: Contract) -> String {
         "contract-\(contract.id.uuidString)"
+    }
+
+    private func secondNotificationIdentifier(for contract: Contract) -> String {
+        "contract-\(contract.id.uuidString)-second"
     }
 
     private func nextAlertDate(for contract: Contract) -> Date? {
