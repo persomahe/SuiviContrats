@@ -1,4 +1,6 @@
 import SwiftUI
+import CloudKit
+import UIKit
 
 struct ContentView: View {
     @StateObject private var store: ContractStore
@@ -115,7 +117,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showingNewContract) {
-                ContractEditorView(contract: Contract()) { contract in
+                ContractEditorView(contract: Contract(), groupNames: store.groupNames) { contract in
                     let isFirstContract = store.contracts.isEmpty
                     store.add(contract)
                     showingNewContract = false
@@ -270,9 +272,37 @@ private struct ContractDetailView: View {
     let contract: Contract
     let store: ContractStore
     @State private var showingEditor = false
+    @State private var showingShareUnavailableAlert = false
+    @State private var showingShareError = false
+    @State private var shareErrorMessage = ""
+
+    private var trimmedGroupName: String {
+        contract.groupName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     var body: some View {
         Form {
+            if !trimmedGroupName.isEmpty {
+                Section {
+                    DetailRow(label: "Groupe", value: trimmedGroupName)
+                    Button {
+                        shareGroup()
+                    } label: {
+                        Label(
+                            CloudKitSharingManager.shared.isGroupShared(trimmedGroupName)
+                                ? "Groupe déjà partagé"
+                                : "Partager le groupe",
+                            systemImage: CloudKitSharingManager.shared.isGroupShared(trimmedGroupName)
+                                ? "person.2.fill"
+                                : "person.2.badge.plus"
+                        )
+                    }
+                    .disabled(CloudKitSharingManager.shared.isGroupShared(trimmedGroupName))
+                } header: {
+                    Text("Partage")
+                        .foregroundColor(.purple)
+                }
+            }
             Text(contract.name.isEmpty ? "Contrat" : contract.name)
                 .font(.title)
                 .foregroundColor(.green)
@@ -326,11 +356,44 @@ private struct ContractDetailView: View {
                 .accessibilityLabel("Modifier le contrat")
             }
         }
+        .alert("Partage indisponible", isPresented: $showingShareUnavailableAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Le partage nécessite un groupe et la configuration CloudKit dans Xcode.")
+        }
+        .alert("Erreur de partage", isPresented: $showingShareError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(shareErrorMessage)
+        }
         .sheet(isPresented: $showingEditor) {
-            ContractEditorView(contract: contract) { updatedContract in
+            ContractEditorView(contract: contract, groupNames: store.groupNames) { updatedContract in
+                if updatedContract.groupName.trimmingCharacters(in: .whitespacesAndNewlines) != trimmedGroupName,
+                   CloudKitSharingManager.shared.isGroupShared(trimmedGroupName) {
+                    // A shared contract must not be moved to another group.
+                    showingShareUnavailableAlert = true
+                    return
+                }
                 store.update(updatedContract)
                 showingEditor = false
             }
+        }
+    }
+
+    private func shareGroup() {
+        guard !trimmedGroupName.isEmpty,
+              let viewController = UIApplication.shared.firstKeyWindowRootViewController else {
+            showingShareUnavailableAlert = true
+            return
+        }
+        CloudKitSharingManager.shared.shareGroup(
+            named: trimmedGroupName,
+            contracts: store.contracts,
+            presenting: viewController
+        ) { error in
+            guard let error else { return }
+            shareErrorMessage = error.localizedDescription
+            showingShareError = true
         }
     }
 }
@@ -375,5 +438,27 @@ private struct SummaryCard: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(store: PreviewData.contractStore)
+    }
+}
+
+private extension UIApplication {
+    var firstKeyWindowRootViewController: UIViewController? {
+        guard let window = connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow),
+              let rootViewController = window.rootViewController else {
+            return nil
+        }
+
+        var viewController = rootViewController
+        while let presented = viewController.presentedViewController {
+            viewController = presented
+        }
+        if let navigationController = viewController as? UINavigationController,
+           let visibleViewController = navigationController.visibleViewController {
+            viewController = visibleViewController
+        }
+        return viewController
     }
 }

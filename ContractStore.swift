@@ -8,6 +8,13 @@ final class ContractStore: ObservableObject {
         }
     }
 
+    var groupNames: [String] {
+        Array(Set(contracts.map { $0.groupName.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty })).sorted {
+                $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+            }
+    }
+
     private let persistenceKey = "savedContracts"
     private let persistsData: Bool
 

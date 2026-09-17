@@ -21,6 +21,7 @@ enum AmountType: String, Codable, CaseIterable {
 
 struct Contract: Identifiable, Codable, Equatable {
     var id = UUID()
+    var groupName = ""
     var name = ""
     var category = "Assurance"
     var provider = ""
@@ -35,13 +36,14 @@ struct Contract: Identifiable, Codable, Equatable {
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case id, name, category, provider, anniversaryDate
+        case id, groupName, name, category, provider, anniversaryDate
         case cancellationNoticeMonths, amountType, amount, annualAmounts, status, comment
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        groupName = try container.decodeIfPresent(String.self, forKey: .groupName) ?? ""
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         category = try container.decodeIfPresent(String.self, forKey: .category) ?? "Assurance"
         provider = try container.decodeIfPresent(String.self, forKey: .provider) ?? ""

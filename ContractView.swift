@@ -15,6 +15,11 @@ struct ContractView: View {
         }
     }
 
+    private var groupNames: [String] {
+        let names = Set(store.contracts.map { $0.groupName.trimmingCharacters(in: .whitespacesAndNewlines) })
+        return Array(names).filter { !$0.isEmpty }
+    }
+
     var body: some View {
         List {
             if store.contracts.isEmpty {
@@ -69,7 +74,7 @@ struct ContractView: View {
             }
         }
         .sheet(isPresented: $showingEditor) {
-            ContractEditorView(contract: Contract()) { contract in
+            ContractEditorView(contract: Contract(), groupNames: groupNames) { contract in
                 let isFirstContract = store.contracts.isEmpty
                 store.add(contract)
                 showingEditor = false
@@ -79,7 +84,7 @@ struct ContractView: View {
             }
         }
         .sheet(item: $editingContract) { contract in
-            ContractEditorView(contract: contract) { updated in
+            ContractEditorView(contract: contract, groupNames: groupNames) { updated in
                 store.update(updated)
                 editingContract = nil
             }
@@ -133,10 +138,12 @@ private struct ContractRow: View {
 struct ContractEditorView: View {
     @Environment(\.presentationMode) private var presentationMode
     @State private var contract: Contract
+    let groupNames: [String]
     let onSave: (Contract) -> Void
 
-    init(contract: Contract, onSave: @escaping (Contract) -> Void) {
+    init(contract: Contract, groupNames: [String] = [], onSave: @escaping (Contract) -> Void) {
         _contract = State(initialValue: contract)
+        self.groupNames = groupNames
         self.onSave = onSave
     }
 
@@ -144,6 +151,22 @@ struct ContractEditorView: View {
         NavigationView {
             Form {
                 Section {
+                    TextField("Groupe", text: $contract.groupName)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled()
+                        .onChange(of: contract.groupName) { value in
+                            contract.groupName = value
+                        }
+                    if !groupNames.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(groupNames, id: \.self) { group in
+                                    Button(group) { contract.groupName = group }
+                                        .buttonStyle(.bordered)
+                                }
+                            }
+                        }
+                    }
                     TextField("Nom du contrat", text: $contract.name)
                         .font(.body.bold())
                     Picker("Catégorie", selection: $contract.category) {
