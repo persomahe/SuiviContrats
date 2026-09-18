@@ -11,6 +11,30 @@ final class CloudKitSharingManager: NSObject, ObservableObject {
     private let sharedGroupKey = "sharedContractGroups"
     private var sharedGroupNames: Set<String>
 
+    private enum SharingError: LocalizedError {
+        case accountUnavailable(CKAccountStatus)
+
+        var errorDescription: String? {
+            switch self {
+            case .accountUnavailable(let status):
+                switch status {
+                case .noAccount:
+                    return "Aucun compte iCloud n’est connecté sur cet appareil. Connectez-vous à iCloud dans Réglages, puis réessayez."
+                case .restricted:
+                    return "L’accès à iCloud est restreint sur cet appareil."
+                case .couldNotDetermine:
+                    return "L’état du compte iCloud ne peut pas être déterminé. Vérifiez la connexion Internet et réessayez."
+                case .temporarilyUnavailable:
+                    return "Le compte iCloud est temporairement indisponible. Réessayez dans quelques instants."
+                case .available:
+                    return nil
+                @unknown default:
+                    return "Le compte iCloud n’est pas disponible pour le partage."
+                }
+            }
+        }
+    }
+
     private override init() {
         container = CKContainer(identifier: Self.containerIdentifier)
         privateDatabase = container.privateCloudDatabase
@@ -28,6 +52,17 @@ final class CloudKitSharingManager: NSObject, ObservableObject {
 
         Task {
             do {
+                let accountStatus = try await container.accountStatus()
+                let currentUserRecordID = try await container.userRecordID()
+                print("Bundle ID :", Bundle.main.bundleIdentifier ?? "inconnu")
+                print("Entitlements iCloud signés : diagnostic indisponible sur iOS")
+                print("[CloudKit] Conteneur : \(Self.containerIdentifier)")
+                print("[CloudKit] État du compte : \(accountStatus)")
+                print("[CloudKit] Utilisateur CloudKit courant : \(currentUserRecordID.recordName)")
+                guard accountStatus == .available else {
+                    throw SharingError.accountUnavailable(accountStatus)
+                }
+
                 let rootID = CKRecord.ID(recordName: "contract-group-\(stableIdentifier(for: cleanedName))")
                 let groupRecord = try await fetchOrCreateGroupRecord(id: rootID, name: cleanedName)
                 let contractRecords = contracts
@@ -35,35 +70,61 @@ final class CloudKitSharingManager: NSObject, ObservableObject {
                     .map { makeRecord(for: $0, parent: groupRecord) }
 
                 let share: CKShare
-                if let existingShare = try await fetchShare(for: groupRecord.recordID) {
-                    share = existingShare
+                let existingShare: CKShare?
+                if let fetchedShare = try await fetchShare(for: groupRecord.recordID) {
+                    share = fetchedShare
+                    existingShare = fetchedShare
                 } else {
                     share = CKShare(rootRecord: groupRecord)
                     share[CKShare.SystemFieldKey.title] = "Groupe de contrats : \(cleanedName)"
                     share.publicPermission = .none
+                    existingShare = nil
                 }
+
+                print("[CloudKit] Groupe : \(cleanedName)")
+                print("[CloudKit] Groupe ID : \(groupRecord.recordID.recordName)")
+                print("[CloudKit] Nombre de contrats partagés : \(contractRecords.count)")
+                print("[CloudKit] CKShare existant : \(existingShare != nil)")
 
                 let recordsToSave = [groupRecord] + contractRecords + [share]
                 _ = try await privateDatabase.modifyRecords(saving: recordsToSave, deleting: [])
                 sharedGroupNames.insert(cleanedName)
                 persistSharedGroupNames()
 
-                let controller = UICloudSharingController { [weak self] sharingController, completionBlock in
-                    guard let self else { return }
-                    Task {
-                        do {
-                            let currentShare = try await self.fetchShare(for: groupRecord.recordID) ?? share
-                            completionBlock(currentShare, self.container, nil)
-                        } catch {
-                            completionBlock(nil, self.container, error)
-                        }
-                    }
+                print("[CloudKit] Propriétaire du CKShare : \(share.owner.userIdentity)")
+                print("[CloudKit] Rôle du propriétaire : \(share.owner.role.rawValue)")
+                print("[CloudKit] Permission du propriétaire : \(share.owner.permission.rawValue)")
+                if let currentParticipant = share.currentUserParticipant {
+                    print("[CloudKit] Participant courant : \(currentParticipant.userIdentity)")
+                    print("[CloudKit] Rôle du participant courant : \(currentParticipant.role.rawValue)")
+                    print("[CloudKit] Permission du participant courant : \(currentParticipant.permission.rawValue)")
+                } else {
+                    print("[CloudKit] Aucun participant courant associé au CKShare")
                 }
+                print("[CloudKit] Permission publique : \(share.publicPermission.rawValue)")
+
+                let controller = UICloudSharingController(share: share, container: container)
                 controller.delegate = self
                 controller.availablePermissions = [.allowReadWrite]
-                viewController.present(controller, animated: true)
-                completion(nil)
+                DispatchQueue.main.async {
+                    guard viewController.viewIfLoaded?.window != nil else {
+                        let error = NSError(
+                            domain: "CloudKitSharingManager",
+                            code: 1,
+                            userInfo: [NSLocalizedDescriptionKey: "Impossible d’afficher la feuille de partage depuis l’écran courant."]
+                        )
+                        completion(error)
+                        return
+                    }
+                    viewController.present(controller, animated: true)
+                    completion(nil)
+                }
             } catch {
+                if let cloudKitError = error as? CKError {
+                    print("[CloudKit] Code erreur : \(cloudKitError.code.rawValue)")
+                    print("[CloudKit] Détail erreur : \(cloudKitError.localizedDescription)")
+                    print("[CloudKit] UserInfo : \(cloudKitError.userInfo)")
+                }
                 print("Erreur CloudKit lors du partage du groupe : \(error)")
                 completion(error)
             }
@@ -112,7 +173,7 @@ final class CloudKitSharingManager: NSObject, ObservableObject {
 
     private func makeRecord(for contract: Contract, parent: CKRecord) -> CKRecord {
         let record = CKRecord(recordType: "Contract", recordID: CKRecord.ID(recordName: "contract-\(contract.id.uuidString)"))
-        record.parent = CKRecord.Reference(record: parent, action: .deleteSelf)
+        record.parent = CKRecord.Reference(record: parent, action: .none)
         record["id"] = contract.id.uuidString as CKRecordValue
         record["groupName"] = contract.groupName as CKRecordValue
         record["name"] = contract.name as CKRecordValue
