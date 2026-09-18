@@ -105,7 +105,7 @@ final class CloudKitSharingManager: NSObject, ObservableObject {
 
                 let controller = UICloudSharingController(share: share, container: container)
                 controller.delegate = self
-                controller.availablePermissions = [.allowReadWrite]
+                controller.availablePermissions = [.allowReadWrite, .allowReadOnly]
                 DispatchQueue.main.async {
                     guard viewController.viewIfLoaded?.window != nil else {
                         let error = NSError(
@@ -146,28 +146,11 @@ final class CloudKitSharingManager: NSObject, ObservableObject {
     }
 
     private func fetchShare(for recordID: CKRecord.ID) async throws -> CKShare? {
-        try await withCheckedThrowingContinuation { continuation in
-            let operation = CKFetchRecordsOperation(recordIDs: [recordID])
-            var fetchedShare: CKShare?
-
-            operation.perRecordResultBlock = { _, result in
-                if case .success(let record) = result {
-                    fetchedShare = record as? CKShare
-                }
-            }
-            operation.fetchRecordsResultBlock = { result in
-                switch result {
-                case .success:
-                    continuation.resume(returning: fetchedShare)
-                case .failure(let error):
-                    if let ckError = error as? CKError, ckError.code == .unknownItem {
-                        continuation.resume(returning: nil)
-                    } else {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
-            privateDatabase.add(operation)
+        do {
+            let record = try await privateDatabase.record(for: recordID)
+            return record.share as? CKShare
+        } catch let error as CKError where error.code == .unknownItem {
+            return nil
         }
     }
 

@@ -297,7 +297,7 @@ private struct ContractDetailView: View {
                                 : "person.2.badge.plus"
                         )
                     }
-                    .disabled(CloudKitSharingManager.shared.isGroupShared(trimmedGroupName))
+                    .disabled(false)
                 } header: {
                     Text("Partage")
                         .foregroundColor(.purple)
