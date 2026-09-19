@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showingNewContract = false
     @State private var showingContracts = false
     @State private var showingNotificationSettings = false
+    @State private var showingGroups = false
 
     init(store: ContractStore = ContractStore()) {
         _store = StateObject(wrappedValue: store)
@@ -104,6 +105,11 @@ struct ContentView: View {
                             Label("Mes contrats", systemImage: "list.bullet.rectangle")
                         }
                         Button {
+                            showingGroups = true
+                        } label: {
+                            Label("Groupes de contrats", systemImage: "person.3")
+                        }
+                        Button {
                             showingNotificationSettings = true
                         } label: {
                             Label("Gérer les notifications", systemImage: "bell.badge")
@@ -133,6 +139,11 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingNotificationSettings) {
                 NotificationSettingsView()
+            }
+            .sheet(isPresented: $showingGroups) {
+                NavigationView {
+                    ContractGroupView(store: store)
+                }
             }
         }
         .background(Color.appBackground.ignoresSafeArea())

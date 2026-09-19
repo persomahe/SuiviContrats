@@ -16,8 +16,7 @@ struct ContractView: View {
     }
 
     private var groupNames: [String] {
-        let names = Set(store.contracts.map { $0.groupName.trimmingCharacters(in: .whitespacesAndNewlines) })
-        return Array(names).filter { !$0.isEmpty }
+        store.groupNames
     }
 
     var body: some View {
