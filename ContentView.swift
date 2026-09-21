@@ -1,5 +1,11 @@
 import SwiftUI
 
+private struct DashboardContractGroup: Identifiable {
+    let id: String
+    let name: String
+    let contracts: [Contract]
+}
+
 struct ContentView: View {
     @StateObject private var store: ContractStore
     @State private var showingNewContract = false
@@ -24,6 +30,59 @@ struct ContentView: View {
             }
     }
 
+    //Regroupement des contrats par Groupe dans le tableau de bord.
+    private var contractsByGroup: [DashboardContractGroup] {
+        let activeContracts = store.contracts.filter {
+            $0.status != "Résilié"
+        }
+
+        var groupedContracts: [String: [Contract]] = [:]
+
+        for contract in activeContracts {
+            let groupID = contract.groupID?.uuidString ?? "ungrouped"
+            groupedContracts[groupID, default: []].append(contract)
+        }
+
+        var result: [DashboardContractGroup] = []
+
+        // Groupes existants
+        for group in store.groups {
+            guard let contracts = groupedContracts[group.id.uuidString],
+                  !contracts.isEmpty else {
+                continue
+            }
+
+            let sortedContracts = contracts.sorted {
+                urgency(for: $0.anniversaryDate) > urgency(for: $1.anniversaryDate)
+            }
+
+            result.append(
+                DashboardContractGroup(
+                    id: group.id.uuidString,
+                    name: group.name,
+                    contracts: sortedContracts
+                )
+            )
+        }
+
+        // Contrats sans groupe
+        if let ungroupedContracts = groupedContracts["ungrouped"],
+           !ungroupedContracts.isEmpty {
+            let sortedContracts = ungroupedContracts.sorted {
+                urgency(for: $0.anniversaryDate) > urgency(for: $1.anniversaryDate)
+            }
+
+            result.append(
+                DashboardContractGroup(
+                    id: "ungrouped",
+                    name: "Sans groupe",
+                    contracts: sortedContracts
+                )
+            )
+        }
+
+        return result
+    }
     private func urgency(for date: Date) -> Double {
         let calendar = Calendar.current
         let now = Date()
@@ -154,12 +213,27 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 30)
             } else {
-                LazyVGrid(columns: columns, spacing: 8) {
-                    ForEach(contractsByUrgency) { contract in
-                        NavigationLink(destination: ContractDetailView(contract: contract, store: store)) {
-                            ContractDashboardCard(contract: contract)
+                VStack(alignment: .leading, spacing: 12) {
+                    ForEach(contractsByGroup) { group in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(group.name)
+                                .font(.headline.bold())
+                                .foregroundColor(.white)
+
+                            LazyVGrid(columns: columns, spacing: 8) {
+                                ForEach(group.contracts) { contract in
+                                    NavigationLink(
+                                        destination: ContractDetailView(
+                                            contract: contract,
+                                            store: store
+                                        )
+                                    ) {
+                                        ContractDashboardCard(contract: contract)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
@@ -304,7 +378,7 @@ private struct ContractDetailView: View {
         Form {
             Text(contract.name.isEmpty ? "Contrat" : contract.name)
                 .font(.title)
-                .foregroundColor(.green)
+                .foregroundColor(.appDarkGreen)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .lineLimit(2)
@@ -343,6 +417,11 @@ private struct ContractDetailView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background {
+            Color.appBackground
+                .ignoresSafeArea()
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -350,7 +429,7 @@ private struct ContractDetailView: View {
                     showingEditor = true
                 } label: {
                     Image(systemName: "pencil")
-                        .foregroundColor(.green)
+                        .foregroundColor(.appDarkGreen)
                 }
                 .accessibilityLabel("Modifier le contrat")
             }
@@ -385,7 +464,7 @@ private struct SummaryCard: View {
     let systemImage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             Image(systemName: systemImage)
                 .foregroundColor(.accentColor)
             Text(value)
