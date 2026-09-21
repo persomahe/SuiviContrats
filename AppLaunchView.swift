@@ -19,7 +19,7 @@ struct AppLaunchView: View {
             }
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation(.easeInOut(duration: 0.4)) {
                     showContent = true
                 }
