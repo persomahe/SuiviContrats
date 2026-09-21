@@ -7,6 +7,7 @@
     objects = {
 
 /* Begin PBXBuildFile section */
+        E1F2A3B4C5D60718293A4B5C /* BackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60718293A4B5D /* BackgroundImage.swift */; };
         1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */; };
         1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6058940D05DD3D006BFB54 /* ContentView.swift */; };
         1D60589E0D05DD3D006BFB54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D6058990D05DD3D006BFB54 /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+        E1F2A3B4C5D60718293A4B5D /* BackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImage.swift; sourceTree = "<group>"; };
         1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiviContratsApp.swift; sourceTree = "<group>"; };
         1D6058940D05DD3D006BFB54 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
         1D6058950D05DD3D006BFB54 /* SuiviContrats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuiviContrats.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,6 +40,7 @@
         1D60588E0D05DD3D006BFB54 /* SuiviContrats */ = {
             isa = PBXGroup;
             children = (
+                E1F2A3B4C5D60718293A4B5D /* BackgroundImage.swift */,
                 1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */,
                 1D6058940D05DD3D006BFB54 /* ContentView.swift */,
                 D1E2F3A405162738495A6B7D /* AppLaunchView.swift */,
@@ -123,6 +126,7 @@
             isa = PBXSourcesBuildPhase;
             buildActionMask = 2147483647;
             files = (
+                E1F2A3B4C5D60718293A4B5C /* BackgroundImage.swift in Sources */,
                 1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */,
                 1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */,
                 46FFAE263050489400C57DAC /* PreviewData.swift in Sources */,

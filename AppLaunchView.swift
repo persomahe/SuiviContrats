@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct AppLaunchView: View {
     @ObservedObject var store: ContractStore
     @State private var showContent = false
@@ -31,28 +30,15 @@ struct AppLaunchView: View {
 
 private struct SplashView: View {
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Image("fondPage")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height
-                    )
-                    .clipped()
+        ZStack {
+            BackgroundImage(imageName: "fondPage")
+                .ignoresSafeArea()
 
-                Image("contractFolder")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 260)
-                    .offset(y: -60)
-            }
-            .frame(
-                width: geometry.size.width,
-                height: geometry.size.height
-            )
+            Image("contractFolder")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 260)
+                .offset(y: -60)
         }
-        .ignoresSafeArea()
     }
 }

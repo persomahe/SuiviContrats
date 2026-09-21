@@ -52,41 +52,27 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Tableau de bord")
-                        .font(.title.bold())
+            ZStack {
+                BackgroundImage(imageName: "fondPage")
+                    .ignoresSafeArea()
 
-                    if store.contracts.isEmpty {
-                        VStack(spacing: 12) {
-                            Image(systemName: "doc.text")
-                                .font(.system(size: 40))
-                                .foregroundColor(.secondary)
-                            Text("Aucun contrat")
-                                .font(.headline)
-                            Text("Ajoutez vos contrats depuis le menu.")
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
+                Group {
+                    if #available(iOS 16.0, *) {
+                        ScrollView {
+                            dashboardContent
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 30)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.clear)
                     } else {
-                        LazyVGrid(columns: columns, spacing: 8) {
-                            ForEach(contractsByUrgency) { contract in
-                                NavigationLink(destination: ContractDetailView(contract: contract, store: store)) {
-                                    ContractDashboardCard(contract: contract)
-                                }
-                                .buttonStyle(.plain)
-                            }
+                        ScrollView {
+                            dashboardContent
                         }
+                        .background(Color.clear)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .topLeading)
-                .padding(.horizontal)
-                .padding(.top, 1)
-                .padding(.bottom)
             }
-            .background(Color.appBackground.ignoresSafeArea())
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.clear)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -133,9 +119,44 @@ struct ContentView: View {
                 NotificationSettingsView()
             }
         }
-        .background(Color.appBackground.ignoresSafeArea())
         .navigationViewStyle(StackNavigationViewStyle())
         .dynamicTypeSize(.medium)
+    }
+
+    private var dashboardContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Tableau de bord")
+                .font(.title.bold())
+                .foregroundColor(.white)
+
+            if store.contracts.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                    Text("Aucun contrat")
+                        .font(.headline)
+                    Text("Ajoutez vos contrats depuis le menu.")
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 30)
+            } else {
+                LazyVGrid(columns: columns, spacing: 8) {
+                    ForEach(contractsByUrgency) { contract in
+                        NavigationLink(destination: ContractDetailView(contract: contract, store: store)) {
+                            ContractDashboardCard(contract: contract)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .padding(.horizontal)
+        .padding(.top, 1)
+        .padding(.bottom)
     }
 }
 
