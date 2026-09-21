@@ -182,6 +182,7 @@ private struct ContractDashboardCard: View {
         VStack(spacing: 10) {
             Text(contract.name.isEmpty ? "Sans nom" : contract.name)
                 .font(.subheadline.weight(.semibold))
+                .foregroundColor(.appDarkGreen)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, minHeight: 36)
@@ -195,7 +196,7 @@ private struct ContractDashboardCard: View {
 
             Text(contract.status)
                 .font(.caption2.weight(.medium))
-                .foregroundColor(contract.status == "Résilié" ? .red : .green)
+                .foregroundColor(contract.status == "Résilié" ? .red : .appMediumGreen)
         }
         .padding(8)
         .frame(maxWidth: .infinity, minHeight: 155)
@@ -270,7 +271,7 @@ private struct AnniversaryProgressRing: View {
                 .trim(from: 0, to: progress)
                 .stroke(
                     AngularGradient(
-                        colors: [.green, .green, .yellow, .red, .red],
+                        colors: [.appMediumGreen, .appMediumGreen, .yellow, .red, .red],
                         center: .center
                     ),
                     style: StrokeStyle(lineWidth: 10, lineCap: .round)
@@ -306,14 +307,14 @@ private struct ContractDetailView: View {
                 DetailRow(label: "Statut", value: contract.status)
             } header: {
                 Text("Informations")
-                    .foregroundColor(.purple)
+                    .foregroundColor(.appDarkGreen)
             }
             Section {
                 DetailRow(label: "Date anniversaire", value: contract.anniversaryDate.formatted(date: .long, time: .omitted))
                 DetailRow(label: "Délai de préavis", value: contract.cancellationNoticeMonths == 0 ? "Aucun délai" : "\(contract.cancellationNoticeMonths) mois avant")
             } header: {
                 Text("Échéance")
-                    .foregroundColor(.purple)
+                    .foregroundColor(.appDarkGreen)
             }
             Section {
                 DetailRow(label: "Type", value: contract.amountType.label)
@@ -322,7 +323,7 @@ private struct ContractDetailView: View {
                 }
             }  header: {
                 Text("Montant")
-                    .foregroundColor(.purple)
+                    .foregroundColor(.appDarkGreen)
             }
             if !contract.annualAmounts.isEmpty {
                 Section {
@@ -331,7 +332,7 @@ private struct ContractDetailView: View {
                     }
                 }  header: {
                     Text("Montant")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.appDarkGreen)
                 }
             }
         }

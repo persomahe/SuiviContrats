@@ -52,6 +52,7 @@ struct ContractView: View {
                 .onDelete { store.delete(at: $0, from: displayedContracts) }
             }
         }
+        .scrollContentBackground(.hidden)
         .background {
             Color.appBackground
                 .ignoresSafeArea()
@@ -108,7 +109,7 @@ private struct ContractRow: View {
                 Spacer()
                 Text(contract.status)
                     .font(.caption)
-                    .foregroundColor(contract.status == "Résilié" ? .red : .mint)
+                    .foregroundColor(contract.status == "Résilié" ? .red : .appMediumGreen)
             }
             Text(contract.category + (contract.provider.isEmpty ? "" : " • \(contract.provider)"))
                 .font(.subheadline)
@@ -214,7 +215,8 @@ struct ContractEditorView: View {
                         .foregroundColor(.appDarkGreen)
                 }
             }
-                .background {
+            .scrollContentBackground(.hidden)
+            .background {
                 Color.appBackground
                     .ignoresSafeArea()
             }
