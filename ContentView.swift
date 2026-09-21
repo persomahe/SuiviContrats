@@ -204,10 +204,6 @@ private struct ContractDashboardCard: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .lineLimit(1)
-
-            Text(contract.status)
-                .font(.caption2.weight(.medium))
-                .foregroundColor(contract.status == "Résilié" ? .red : .mint)
         }
         .padding(8)
         .frame(maxWidth: .infinity, minHeight: 155)

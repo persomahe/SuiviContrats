@@ -5,28 +5,65 @@ struct ContractView: View {
     @Environment(\.presentationMode) private var presentationMode
     @State private var showingEditor = false
     @State private var editingContract: Contract?
+    @State private var searchText = ""
 
     private var displayedContracts: [Contract] {
-        store.contracts.sorted { first, second in
+        let filteredContracts = store.contracts.filter { contract in
+            guard !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                return true
+            }
+
+            let contractName = contract.name
+
+            let groupName: String = {
+                guard let groupID = contract.groupID else { return "" }
+                return store.groups.first(where: { $0.id == groupID })?.name ?? ""
+            }()
+
+            return contractName.localizedCaseInsensitiveContains(searchText)
+                || groupName.localizedCaseInsensitiveContains(searchText)
+        }
+        //Tri : les résiliés en dernier
+        return filteredContracts.sorted { first, second in
             let firstIsTerminated = first.status == "Résilié"
             let secondIsTerminated = second.status == "Résilié"
-            if firstIsTerminated != secondIsTerminated { return !firstIsTerminated }
-            return false
+
+            if firstIsTerminated != secondIsTerminated {
+                return !firstIsTerminated
+            }
+            //Tri : par Groupe
+            func groupName(for contract: Contract) -> String {
+                guard let groupID = contract.groupID else { return "" }
+                return store.groups.first(where: { $0.id == groupID })?.name ?? ""
+            }
+
+            let firstGroupName = groupName(for: first)
+            let secondGroupName = groupName(for: second)
+
+            if firstGroupName != secondGroupName {
+                return firstGroupName.localizedCaseInsensitiveCompare(secondGroupName) == .orderedAscending
+            }
+
+            return first.name.localizedCaseInsensitiveCompare(second.name) == .orderedAscending
         }
     }
 
     var body: some View {
         List {
-            if store.contracts.isEmpty {
+            if displayedContracts.isEmpty {
                 Section {
                     VStack(spacing: 12) {
                         Image(systemName: "doc.text")
                             .font(.system(size: 44))
                             .foregroundColor(.appDarkGreen)
-                        Text("Aucun contrat")
+                        Text(searchText.isEmpty ? "Aucun contrat" : "Aucun résultat")
                             .font(.title2.bold())
-                        Text("Ajoutez votre premier contrat pour commencer le suivi.")
-                            .multilineTextAlignment(.center)
+                        Text(
+                            searchText.isEmpty
+                            ? "Ajoutez votre premier contrat pour commencer le suivi."
+                            : "Aucun groupe ou contrat ne correspond à votre recherche."
+                        )
+                        .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)
                         Button("Ajouter un contrat") { showingEditor = true }
                             .buttonStyle(.borderedProminent)
@@ -38,7 +75,7 @@ struct ContractView: View {
             } else {
                 ForEach(displayedContracts) { contract in
                     Button { editingContract = contract } label: {
-                        ContractRow(contract: contract)
+                        ContractRow(contract: contract, store: store)
                     }
                     .buttonStyle(.plain)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -72,6 +109,31 @@ struct ContractView: View {
                 Button { showingEditor = true } label: { Image(systemName: "plus") }
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+
+                TextField("Rechercher un groupe ou un contrat", text: $searchText)
+                    .textFieldStyle(.plain)
+
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal)
+            .padding(.bottom, 6)
+        }
         .sheet(isPresented: $showingEditor) {
             ContractEditorView(contract: Contract(), store: store) { contract in
                 let isFirstContract = store.contracts.isEmpty
@@ -99,24 +161,37 @@ struct ContractView: View {
 
 private struct ContractRow: View {
     let contract: Contract
+    let store: ContractStore
+
+    // Calcule le nom du groupe associé au contrat (nil si aucun)
+    private var groupName: String? {
+        guard let gid = contract.groupID else { return nil }
+        return store.groups.first(where: { $0.id == gid })?.name
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
-                Text(contract.name.isEmpty ? "Sans nom" : contract.name)
+                // Affiche le nom du groupe si présent (juste avant le nom du contrat)
+                let title = (groupName != nil ? "\(groupName!) - " : "") + (contract.name.isEmpty ? "Sans nom" : contract.name)
+                Text(title)
                     .font(.headline)
                     .foregroundColor(contract.status == "Résilié" ? .red : .appDarkGreen)
+
                 Spacer()
+
                 Text(contract.status)
                     .font(.caption)
                     .foregroundColor(contract.status == "Résilié" ? .red : .mint)
             }
+
             Text(contract.category + (contract.provider.isEmpty ? "" : " • \(contract.provider)"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+
             Text("Anniversaire : \(contract.anniversaryDate.formatted(date: .abbreviated, time: .omitted)) - Préavis de : \(contract.cancellationNoticeMonths) mois")
                 .font(.caption)
-            
+
             if contract.amount > 0 {
                 Text(String(format: "%.2f %@", contract.amount, contract.amountType.unit))
                     .font(.caption)
