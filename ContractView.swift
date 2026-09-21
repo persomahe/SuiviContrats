@@ -73,7 +73,7 @@ struct ContractView: View {
             }
         }
         .sheet(isPresented: $showingEditor) {
-            ContractEditorView(contract: Contract()) { contract in
+            ContractEditorView(contract: Contract(), store: store) { contract in
                 let isFirstContract = store.contracts.isEmpty
                 store.add(contract)
                 showingEditor = false
@@ -83,7 +83,7 @@ struct ContractView: View {
             }
         }
         .sheet(item: $editingContract) { contract in
-            ContractEditorView(contract: contract) { updated in
+            ContractEditorView(contract: contract, store: store) { updated in
                 store.update(updated)
                 editingContract = nil
             }
@@ -109,7 +109,7 @@ private struct ContractRow: View {
                 Spacer()
                 Text(contract.status)
                     .font(.caption)
-                    .foregroundColor(contract.status == "Résilié" ? .red : .appMediumGreen)
+                    .foregroundColor(contract.status == "Résilié" ? .red : .mint)
             }
             Text(contract.category + (contract.provider.isEmpty ? "" : " • \(contract.provider)"))
                 .font(.subheadline)
@@ -137,10 +137,12 @@ private struct ContractRow: View {
 struct ContractEditorView: View {
     @Environment(\.presentationMode) private var presentationMode
     @State private var contract: Contract
+    let store: ContractStore
     let onSave: (Contract) -> Void
 
-    init(contract: Contract, onSave: @escaping (Contract) -> Void) {
+    init(contract: Contract, store: ContractStore, onSave: @escaping (Contract) -> Void) {
         _contract = State(initialValue: contract)
+        self.store = store
         self.onSave = onSave
     }
 
@@ -150,6 +152,12 @@ struct ContractEditorView: View {
                 Section {
                     TextField("Nom du contrat", text: $contract.name)
                         .font(.body.bold())
+                    Picker("Groupe", selection: $contract.groupID) {
+                        Text("Aucun groupe").tag(Optional<UUID>.none)
+                        ForEach(store.groups) { group in
+                            Text(group.name).tag(Optional(group.id))
+                        }
+                    }
                     Picker("Catégorie", selection: $contract.category) {
                         ForEach(Contract.categories, id: \.self) { Text($0) }
                     }

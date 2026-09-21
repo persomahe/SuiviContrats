@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var showingNewContract = false
     @State private var showingContracts = false
     @State private var showingNotificationSettings = false
+    @State private var showingGroups = false
 
     init(store: ContractStore = ContractStore()) {
         _store = StateObject(wrappedValue: store)
@@ -88,9 +89,14 @@ struct ContentView: View {
                             Label("Mes contrats", systemImage: "list.bullet.rectangle")
                         }
                         Button {
+                            showingGroups = true
+                        } label: {
+                            Label("Gestion des groupes", systemImage: "folder")
+                        }
+                        Button {
                             showingNotificationSettings = true
                         } label: {
-                            Label("Gérer les notifications", systemImage: "bell.badge")
+                            Label("Gestion des notifications", systemImage: "bell.badge")
                         }
                         Divider()
                         Text("Autres fonctionnalités à venir")
@@ -101,7 +107,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showingNewContract) {
-                ContractEditorView(contract: Contract()) { contract in
+                ContractEditorView(contract: Contract(), store: store) { contract in
                     let isFirstContract = store.contracts.isEmpty
                     store.add(contract)
                     showingNewContract = false
@@ -117,6 +123,11 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingNotificationSettings) {
                 NotificationSettingsView()
+            }
+            .sheet(isPresented: $showingGroups) {
+                NavigationView {
+                    ContractGroupView(store: store)
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -196,7 +207,7 @@ private struct ContractDashboardCard: View {
 
             Text(contract.status)
                 .font(.caption2.weight(.medium))
-                .foregroundColor(contract.status == "Résilié" ? .red : .appMediumGreen)
+                .foregroundColor(contract.status == "Résilié" ? .red : .mint)
         }
         .padding(8)
         .frame(maxWidth: .infinity, minHeight: 155)
@@ -271,7 +282,7 @@ private struct AnniversaryProgressRing: View {
                 .trim(from: 0, to: progress)
                 .stroke(
                     AngularGradient(
-                        colors: [.appMediumGreen, .appMediumGreen, .yellow, .red, .red],
+                        colors: [.mint, .mint, .yellow, .red, .red],
                         center: .center
                     ),
                     style: StrokeStyle(lineWidth: 10, lineCap: .round)
@@ -349,7 +360,7 @@ private struct ContractDetailView: View {
             }
         }
         .sheet(isPresented: $showingEditor) {
-            ContractEditorView(contract: contract) { updatedContract in
+            ContractEditorView(contract: contract, store: store) { updatedContract in
                 store.update(updatedContract)
                 showingEditor = false
             }
