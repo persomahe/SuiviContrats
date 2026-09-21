@@ -22,7 +22,7 @@ struct ContractView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "doc.text")
                             .font(.system(size: 44))
-                            .foregroundColor(.green)
+                            .foregroundColor(.appDarkGreen)
                         Text("Aucun contrat")
                             .font(.title2.bold())
                         Text("Ajoutez votre premier contrat pour commencer le suivi.")
@@ -30,7 +30,7 @@ struct ContractView: View {
                             .foregroundColor(.secondary)
                         Button("Ajouter un contrat") { showingEditor = true }
                             .buttonStyle(.borderedProminent)
-                            .tint(.green)
+                            .tint(.appDarkGreen)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 24)
@@ -52,7 +52,10 @@ struct ContractView: View {
                 .onDelete { store.delete(at: $0, from: displayedContracts) }
             }
         }
-        .background(Color.appBackground.ignoresSafeArea())
+        .background {
+            Color.appBackground
+                .ignoresSafeArea()
+        }
         .navigationTitle("Mes contrats")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -101,11 +104,11 @@ private struct ContractRow: View {
             HStack {
                 Text(contract.name.isEmpty ? "Sans nom" : contract.name)
                     .font(.headline)
-                    .foregroundColor(contract.status == "Résilié" ? .red : .green)
+                    .foregroundColor(contract.status == "Résilié" ? .red : .appDarkGreen)
                 Spacer()
                 Text(contract.status)
                     .font(.caption)
-                    .foregroundColor(contract.status == "Résilié" ? .red : .green)
+                    .foregroundColor(contract.status == "Résilié" ? .red : .mint)
             }
             Text(contract.category + (contract.provider.isEmpty ? "" : " • \(contract.provider)"))
                 .font(.subheadline)
@@ -155,7 +158,7 @@ struct ContractEditorView: View {
                     }
                 } header: {
                     Text("Informations")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.appDarkGreen)
                 }
                 Section {
                     DatePicker("Date anniversaire", selection: $contract.anniversaryDate, displayedComponents: .date)
@@ -166,7 +169,7 @@ struct ContractEditorView: View {
                     }
                 } header: {
                     Text("Échéance")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.appDarkGreen)
                 }
                 Section {
                     Picker("Type de montant", selection: $contract.amountType) {
@@ -184,7 +187,7 @@ struct ContractEditorView: View {
                     }
                 } header: {
                     Text("Montant")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.appDarkGreen)
                 }
                 Section {
                     ForEach(contract.annualAmounts.indices, id: \.self) { index in
@@ -201,17 +204,20 @@ struct ContractEditorView: View {
                     Button("Ajouter une année") { contract.annualAmounts.append(0) }
                 } header: {
                     Text("Historique des montants annuels")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.appDarkGreen)
                 }
                 Section {
                     TextEditor(text: $contract.comment)
                         .frame(minHeight: 100)
                 } header: {
                     Text("Commentaire")
-                        .foregroundColor(.purple)
+                        .foregroundColor(.appDarkGreen)
                 }
             }
-            .background(Color.appBackground.ignoresSafeArea())
+                .background {
+                Color.appBackground
+                    .ignoresSafeArea()
+            }
             .navigationBarItems(
                 leading: Button("Annuler") { presentationMode.wrappedValue.dismiss() },
                 trailing: Button("Enregistrer") { onSave(contract) }
