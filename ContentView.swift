@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var showingContracts = false
     @State private var showingNotificationSettings = false
     @State private var showingGroups = false
+    @State private var selectedContract: Contract?
 
     init(store: ContractStore = ContractStore()) {
         _store = StateObject(wrappedValue: store)
@@ -188,6 +189,11 @@ struct ContentView: View {
                     ContractGroupView(store: store)
                 }
             }
+            .sheet(item: $selectedContract) { contract in
+                NavigationView {
+                    ContractDetailView(contract: contract, store: store)
+                }
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .dynamicTypeSize(.medium)
@@ -222,12 +228,9 @@ struct ContentView: View {
 
                             LazyVGrid(columns: columns, spacing: 8) {
                                 ForEach(group.contracts) { contract in
-                                    NavigationLink(
-                                        destination: ContractDetailView(
-                                            contract: contract,
-                                            store: store
-                                        )
-                                    ) {
+                                    Button {
+                                        selectedContract = contract
+                                    } label: {
                                         ContractDashboardCard(contract: contract)
                                     }
                                     .buttonStyle(.plain)
