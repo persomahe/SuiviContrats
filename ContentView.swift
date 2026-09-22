@@ -373,19 +373,27 @@ private struct AnniversaryProgressRing: View {
 }
 
 private struct ContractDetailView: View {
-    let contract: Contract
+    @State private var contract: Contract
     let store: ContractStore
     @State private var showingEditor = false
 
+    init(contract: Contract, store: ContractStore) {
+        _contract = State(initialValue: contract)
+        self.store = store
+    }
+
+    private var groupName: String {
+        guard let groupID = contract.groupID else {
+            return "Aucun groupe"
+        }
+
+        return store.groups.first { $0.id == groupID }?.name ?? "Aucun groupe"
+    }
+
     var body: some View {
         Form {
-            Text(contract.name.isEmpty ? "Contrat" : contract.name)
-                .font(.title)
-                .foregroundColor(.appDarkGreen)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .lineLimit(2)
             Section {
+                DetailRow(label: "Groupe", value: groupName)
                 DetailRow(label: "Catégorie", value: contract.category)
                 DetailRow(label: "Fournisseur", value: contract.provider.isEmpty ? "Non renseigné" : contract.provider)
                 DetailRow(label: "Statut", value: contract.status)
@@ -419,6 +427,8 @@ private struct ContractDetailView: View {
                         .foregroundColor(.appDarkGreen)
                 }
             }
+            DetailRow(label: "Commentaire", value: contract.comment.isEmpty ? "Aucun commentaire" : contract.comment)
+
         }
         .scrollContentBackground(.hidden)
         .background {
@@ -427,6 +437,13 @@ private struct ContractDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(contract.name.isEmpty ? "Contrat" : contract.name)
+                    .font(.title)
+                    .foregroundColor(.appDarkGreen)
+                    .lineLimit(1)
+            }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     showingEditor = true
@@ -440,6 +457,7 @@ private struct ContractDetailView: View {
         .sheet(isPresented: $showingEditor) {
             ContractEditorView(contract: contract, store: store) { updatedContract in
                 store.update(updatedContract)
+                contract = updatedContract
                 showingEditor = false
             }
         }
