@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var showingContracts = false
     @State private var showingNotificationSettings = false
     @State private var showingGroups = false
+    @State private var showingDataTransfer = false
     @State private var selectedContract: Contract?
 
     init(store: ContractStore = ContractStore()) {
@@ -154,6 +155,11 @@ struct ContentView: View {
                             Label("Gestion des groupes", systemImage: "folder")
                         }
                         Button {
+                            showingDataTransfer = true
+                        } label: {
+                            Label("Import / export", systemImage: "arrow.up.arrow.down")
+                        }
+                        Button {
                             showingNotificationSettings = true
                         } label: {
                             Label("Gestion des notifications", systemImage: "bell.badge")
@@ -187,6 +193,11 @@ struct ContentView: View {
             .sheet(isPresented: $showingGroups) {
                 NavigationView {
                     ContractGroupView(store: store)
+                }
+            }
+            .sheet(isPresented: $showingDataTransfer) {
+                NavigationView {
+                    DataTransferView(store: store)
                 }
             }
             .sheet(item: $selectedContract) { contract in

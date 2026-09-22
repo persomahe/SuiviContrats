@@ -91,4 +91,54 @@ final class ContractStore: ObservableObject {
             return updated
         }
     }
+
+    func makeBackup() -> ContractBackup {
+        ContractBackup(
+            version: 1,
+            exportedAt: Date(),
+            groups: groups,
+            contracts: contracts
+        )
+    }
+
+    func decodeBackup(from data: Data) throws -> ContractBackup {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let backup = try decoder.decode(ContractBackup.self, from: data)
+
+        guard backup.version == 1 else {
+            throw DataTransferError.unsupportedVersion
+        }
+
+        let groupIDs = Set(backup.groups.map(\.id))
+        let hasInvalidGroupReference = backup.contracts.contains { contract in
+            guard let groupID = contract.groupID else { return false }
+            return !groupIDs.contains(groupID)
+        }
+
+        guard !hasInvalidGroupReference else {
+            throw DataTransferError.invalidGroupReference
+        }
+
+        return backup
+    }
+
+    func restore(backup: ContractBackup) {
+        contracts.forEach { contract in
+            Task { @MainActor in
+                NotificationManager.shared.cancelNotification(for: contract)
+            }
+        }
+
+        groups = backup.groups
+        contracts = backup.contracts
+
+        contracts
+            .filter { $0.status != "Résilié" }
+            .forEach { contract in
+                Task { @MainActor in
+                    NotificationManager.shared.scheduleNotification(for: contract)
+                }
+            }
+    }
 }

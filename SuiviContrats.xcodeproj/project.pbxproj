@@ -19,6 +19,7 @@
         D1E2F3A405162738495A6B7C /* AppLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3A405162738495A6B7D /* AppLaunchView.swift */; };
         E1F2A3B4C5D60718293A4B5C /* BackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60718293A4B5D /* BackgroundImage.swift */; };
         E1F2A3B4C5D60718293A4B5E /* ContractGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F2A3B4C5D60718293A4B5F /* ContractGroupView.swift */; };
+        F1A2B3C4D5E60718293A4B5C /* DataTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E60718293A4B5D /* DataTransfer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
         D1E2F3A405162738495A6B7D /* AppLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchView.swift; sourceTree = "<group>"; };
         E1F2A3B4C5D60718293A4B5D /* BackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImage.swift; sourceTree = "<group>"; };
         E1F2A3B4C5D60718293A4B5F /* ContractGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractGroupView.swift; sourceTree = "<group>"; };
+        F1A2B3C4D5E60718293A4B5D /* DataTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTransfer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -44,6 +46,7 @@
             children = (
                 E1F2A3B4C5D60718293A4B5D /* BackgroundImage.swift */,
                 E1F2A3B4C5D60718293A4B5F /* ContractGroupView.swift */,
+                F1A2B3C4D5E60718293A4B5D /* DataTransfer.swift */,
                 1D60588F0D05DD3D006BFB54 /* SuiviContratsApp.swift */,
                 1D6058940D05DD3D006BFB54 /* ContentView.swift */,
                 D1E2F3A405162738495A6B7D /* AppLaunchView.swift */,
@@ -131,6 +134,7 @@
             files = (
                 E1F2A3B4C5D60718293A4B5C /* BackgroundImage.swift in Sources */,
                 E1F2A3B4C5D60718293A4B5E /* ContractGroupView.swift in Sources */,
+                F1A2B3C4D5E60718293A4B5C /* DataTransfer.swift in Sources */,
                 1D6058900D05DD3D006BFB54 /* SuiviContratsApp.swift in Sources */,
                 1D6058910D05DD3D006BFB54 /* ContentView.swift in Sources */,
                 46FFAE263050489400C57DAC /* PreviewData.swift in Sources */,
