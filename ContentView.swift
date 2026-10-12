@@ -28,7 +28,7 @@ struct ContentView: View {
         store.contracts
             .filter { $0.status != "Résilié" }
             .sorted {
-                urgency(for: $0.anniversaryDate) > urgency(for: $1.anniversaryDate)
+                urgency(for: $0) > urgency(for: $1)
             }
     }
 
@@ -55,7 +55,7 @@ struct ContentView: View {
             }
 
             let sortedContracts = contracts.sorted {
-                urgency(for: $0.anniversaryDate) > urgency(for: $1.anniversaryDate)
+                urgency(for: $0) > urgency(for: $1)
             }
 
             result.append(
@@ -71,7 +71,7 @@ struct ContentView: View {
         if let ungroupedContracts = groupedContracts["ungrouped"],
            !ungroupedContracts.isEmpty {
             let sortedContracts = ungroupedContracts.sorted {
-                urgency(for: $0.anniversaryDate) > urgency(for: $1.anniversaryDate)
+                urgency(for: $0) > urgency(for: $1)
             }
 
             result.append(
@@ -85,6 +85,25 @@ struct ContentView: View {
 
         return result
     }
+    private func urgency(for contract: Contract) -> Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let nextDeadline = calendar.date(
+            byAdding: .month,
+            value: -contract.cancellationNoticeMonths,
+            to: contract.nextAnniversary(after: now, calendar: calendar)
+        ) ?? now
+        let previousAnniversary = contract.previousAnniversary(before: now, calendar: calendar)
+        let previousDeadline = calendar.date(
+            byAdding: .month,
+            value: -contract.cancellationNoticeMonths,
+            to: previousAnniversary
+        ) ?? previousAnniversary
+        let total = max(nextDeadline.timeIntervalSince(previousDeadline), 1)
+        let remaining = max(nextDeadline.timeIntervalSince(now), 0)
+        return min(max(1 - remaining / total, 0), 1)
+    }
+
     private func urgency(for date: Date) -> Double {
         let calendar = Calendar.current
         let now = Date()
@@ -92,15 +111,8 @@ struct ContentView: View {
         let month = calendar.component(.month, from: date)
         let day = calendar.component(.day, from: date)
         let thisYearDate = anniversaryDate(year: currentYear, month: month, day: day, calendar: calendar)
-        let nextDate = thisYearDate > now
-            ? thisYearDate
-            : anniversaryDate(year: currentYear + 1, month: month, day: day, calendar: calendar)
-        let previousDate = anniversaryDate(
-            year: currentYear - (thisYearDate > now ? 1 : 0),
-            month: month,
-            day: day,
-            calendar: calendar
-        )
+        let nextDate = thisYearDate > now ? thisYearDate : anniversaryDate(year: currentYear + 1, month: month, day: day, calendar: calendar)
+        let previousDate = anniversaryDate(year: currentYear - (thisYearDate > now ? 1 : 0), month: month, day: day, calendar: calendar)
         let total = max(nextDate.timeIntervalSince(previousDate), 1)
         let remaining = max(nextDate.timeIntervalSince(now), 0)
         return min(max(1 - remaining / total, 0), 1)
@@ -154,18 +166,18 @@ struct ContentView: View {
                         } label: {
                             Label("Gestion des groupes", systemImage: "folder")
                         }
+                        Divider()
                         Button {
                             showingDataTransfer = true
                         } label: {
-                            Label("Import / export", systemImage: "arrow.up.arrow.down")
+                            Label("Partage / Import", systemImage: "arrow.up.arrow.down")
                         }
+                        Divider()
                         Button {
                             showingNotificationSettings = true
                         } label: {
                             Label("Gestion des notifications", systemImage: "bell.badge")
                         }
-                        Divider()
-                        Text("Autres fonctionnalités à venir")
                     } label: {
                         Image(systemName: "line.3.horizontal")
                             .accessibilityLabel("Menu")
@@ -273,8 +285,9 @@ private struct ContractDashboardCard: View {
             .replacingOccurrences(of: ".", with: "")
         let notice = contract.cancellationNoticeMonths == 0
             ? "Aucun délai"
-            : "\(contract.cancellationNoticeMonths) mois"
-        return "\(date) - \(notice)"
+            : "Préavis \(contract.cancellationNoticeMonths) mois"
+        let period = "/ \(contract.periodicityYears) an\(contract.periodicityYears == 1 ? "" : "s")"
+        return "\(date) - \(period) - \(notice)"
     }
 
     var body: some View {
@@ -310,42 +323,18 @@ private struct AnniversaryProgressRing: View {
     private var progress: Double {
         let calendar = Calendar.current
         let now = Date()
-        let anniversary = contract.anniversaryDate
-        let month = calendar.component(.month, from: anniversary)
-        let day = calendar.component(.day, from: anniversary)
-        let noticeMonths = contract.cancellationNoticeMonths
-
-        let currentYear = calendar.component(.year, from: now)
-        let thisYearAnniversary = anniversaryDate(
-            year: currentYear,
-            month: month,
-            day: day,
-            calendar: calendar
-        )
-        let thisYearDeadline = calendar.date(
+        let nextAnniversary = contract.nextAnniversary(after: now, calendar: calendar)
+        let previousAnniversary = contract.previousAnniversary(before: now, calendar: calendar)
+        let nextDeadline = calendar.date(
             byAdding: .month,
-            value: -noticeMonths,
-            to: thisYearAnniversary
-        ) ?? thisYearAnniversary
-
-        let nextDeadline: Date
-        let previousDeadline: Date
-        if thisYearDeadline > now {
-            nextDeadline = thisYearDeadline
-            previousDeadline = calendar.date(
-                byAdding: .year,
-                value: -1,
-                to: thisYearDeadline
-            ) ?? thisYearDeadline
-        } else {
-            nextDeadline = calendar.date(
-                byAdding: .year,
-                value: 1,
-                to: thisYearDeadline
-            ) ?? thisYearDeadline
-            previousDeadline = thisYearDeadline
-        }
-
+            value: -contract.cancellationNoticeMonths,
+            to: nextAnniversary
+        ) ?? nextAnniversary
+        let previousDeadline = calendar.date(
+            byAdding: .month,
+            value: -contract.cancellationNoticeMonths,
+            to: previousAnniversary
+        ) ?? previousAnniversary
         let total = max(nextDeadline.timeIntervalSince(previousDeadline), 1)
         let remaining = max(nextDeadline.timeIntervalSince(now), 0)
         return min(max(1 - remaining / total, 0), 1)
@@ -378,7 +367,7 @@ private struct AnniversaryProgressRing: View {
                 .foregroundColor(.green)
         }
         .frame(width: 65, height: 65)
-        .accessibilityLabel("Progression vers la prochaine date anniversaire")
+        .accessibilityLabel("Progression vers la prochaine échéance de renouvellement")
         .accessibilityValue("\(Int(progress * 100)) pour cent")
     }
 }
@@ -414,6 +403,10 @@ private struct ContractDetailView: View {
             }
             Section {
                 DetailRow(label: "Date anniversaire", value: contract.anniversaryDate.formatted(date: .long, time: .omitted))
+                DetailRow(
+                    label: "Périodicité",
+                    value: contract.periodicityYears == 1 ? "Tous les ans" : "Tous les \(contract.periodicityYears) ans"
+                )
                 DetailRow(label: "Délai de préavis", value: contract.cancellationNoticeMonths == 0 ? "Aucun délai" : "\(contract.cancellationNoticeMonths) mois avant")
             } header: {
                 Text("Échéance")

@@ -32,7 +32,7 @@ struct NotificationSettingsView: View {
                 } header: {
                     Text("Notifications")
                 } footer: {
-                    Text("Une alerte est programmée un mois avant le délai de préavis de la date anniversaire du contrat.")
+                    Text("Une première alerte est programmée un mois avant le début du délai de préavis, puis un rappel sept jours plus tard. Le calcul tient compte de la périodicité du contrat.")
                 }
             }
             .navigationTitle("Gérer les notifications")

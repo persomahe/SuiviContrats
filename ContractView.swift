@@ -189,7 +189,7 @@ private struct ContractRow: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Text("Anniversaire : \(contract.anniversaryDate.formatted(date: .abbreviated, time: .omitted)) - Préavis de : \(contract.cancellationNoticeMonths) mois")
+            Text("Anniversaire : \(contract.anniversaryDate.formatted(date: .abbreviated, time: .omitted)) - Périodicité : \(contract.periodicityYears) an\(contract.periodicityYears == 1 ? "" : "s") - Préavis de : \(contract.cancellationNoticeMonths) mois")
                 .font(.caption)
 
             if contract.amount > 0 {
@@ -246,6 +246,9 @@ struct ContractEditorView: View {
                 }
                 Section {
                     DatePicker("Date anniversaire", selection: $contract.anniversaryDate, displayedComponents: .date)
+                    Stepper(value: $contract.periodicityYears, in: 1...100) {
+                        Text("Périodicité : \(contract.periodicityYears) an\(contract.periodicityYears == 1 ? "" : "s")")
+                    }
                     Picker("Délai de résiliation", selection: $contract.cancellationNoticeMonths) {
                         ForEach(Contract.noticeOptions, id: \.self) { months in
                             Text(months == 0 ? "Aucun délai" : "\(months) mois avant").tag(months)

@@ -100,17 +100,16 @@ final class NotificationManager: NSObject, ObservableObject {
     private func nextAlertDate(for contract: Contract) -> Date? {
         let calendar = Calendar.current
         let now = Date()
-        let anniversaryComponents = calendar.dateComponents([.month, .day], from: contract.anniversaryDate)
-        guard let month = anniversaryComponents.month, let day = anniversaryComponents.day else { return nil }
+        let period = max(contract.periodicityYears, 1)
+        var anniversary = contract.nextAnniversary(after: now, calendar: calendar)
 
-        let currentYear = calendar.component(.year, from: now)
-        for year in [currentYear, currentYear + 1] {
-            guard let anniversary = calendar.date(from: DateComponents(year: year, month: month, day: day)),
-                  let alertDate = calendar.date(
-                    byAdding: .month,
-                    value: -(contract.cancellationNoticeMonths + 1),
-                    to: anniversary
-                  ) else { continue }
+        // L'alerte est envoyée un mois avant le début du délai de préavis.
+        while true {
+            guard let alertDate = calendar.date(
+                byAdding: .month,
+                value: -(contract.cancellationNoticeMonths + 1),
+                to: anniversary
+            ) else { return nil }
 
             var components = calendar.dateComponents([.year, .month, .day], from: alertDate)
             components.hour = 9
@@ -118,8 +117,9 @@ final class NotificationManager: NSObject, ObservableObject {
             if let normalizedDate = calendar.date(from: components), normalizedDate > now {
                 return normalizedDate
             }
+
+            anniversary = calendar.date(byAdding: .year, value: period, to: anniversary) ?? anniversary
         }
-        return nil
     }
 }
 

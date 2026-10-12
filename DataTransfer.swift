@@ -50,30 +50,54 @@ struct ContractBackupDocument: FileDocument {
 struct DataTransferView: View {
     @ObservedObject var store: ContractStore
     @Environment(\.dismiss) private var dismiss
-    @State private var exportDocument: ContractBackupDocument?
-    @State private var showingExporter = false
+    @State private var sharedFileURL: URL?
     @State private var showingImporter = false
     @State private var showingImportConfirmation = false
     @State private var pendingBackup: ContractBackup?
     @State private var errorMessage: String?
     @State private var showingImportSuccess = false
 
+    private func makeShareFile() throws -> URL {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
+        let data = try encoder.encode(store.makeBackup())
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("SuiviContrats.json")
+        try data.write(to: url, options: .atomic)
+        return url
+    }
+
     var body: some View {
         List {
-            Section("Sauvegarde") {
+            Section("Partager") {
                 Button {
-                    exportDocument = ContractBackupDocument(backup: store.makeBackup())
-                    showingExporter = true
+                    do {
+                        sharedFileURL = try makeShareFile()
+                    } catch {
+                        errorMessage = error.localizedDescription
+                    }
                 } label: {
-                    Label("Exporter mes données", systemImage: "square.and.arrow.up")
+                    Label("Partager mes données", systemImage: "square.and.arrow.up")
+                }
+
+                if let sharedFileURL {
+                    ShareLink(
+                        item: sharedFileURL,
+                        subject: Text("Données SuiviContrats"),
+                        message: Text("Voici mes données SuiviContrats.")
+                    ) {
+                        Label("Choisir le destinataire", systemImage: "paperplane")
+                    }
                 }
             }
 
-            Section("Restauration") {
+            Section("Importer") {
                 Button {
                     showingImporter = true
                 } label: {
-                    Label("Importer mes données", systemImage: "square.and.arrow.down")
+                    Label("Importer des données", systemImage: "square.and.arrow.down")
                 }
 
                 Text("L'import remplace les groupes et les contrats actuellement enregistrés dans l'application.")
@@ -83,21 +107,11 @@ struct DataTransferView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.appBackground.ignoresSafeArea())
-        .navigationTitle("Import / export")
+        .navigationTitle("Partage de données")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Fermer") { dismiss() }
-            }
-        }
-        .fileExporter(
-            isPresented: $showingExporter,
-            document: exportDocument,
-            contentType: .json,
-            defaultFilename: "SuiviContrats"
-        ) { result in
-            if case .failure(let error) = result {
-                errorMessage = error.localizedDescription
             }
         }
         .fileImporter(
@@ -107,6 +121,14 @@ struct DataTransferView: View {
         ) { result in
             do {
                 guard let url = try result.get().first else { return }
+
+                let accessGranted = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessGranted {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                }
+
                 let data = try Data(contentsOf: url)
                 let backup = try store.decodeBackup(from: data)
                 pendingBackup = backup
