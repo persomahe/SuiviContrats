@@ -283,11 +283,8 @@ private struct ContractDashboardCard: View {
                     .locale(Locale(identifier: "fr_FR"))
             )
             .replacingOccurrences(of: ".", with: "")
-        let notice = contract.cancellationNoticeMonths == 0
-            ? "Aucun délai"
-            : "Préavis \(contract.cancellationNoticeMonths) mois"
         let period = "/ \(contract.periodicityYears) an\(contract.periodicityYears == 1 ? "" : "s")"
-        return "\(date) - \(period) - \(notice)"
+        return "\(date) - \(period)"
     }
 
     var body: some View {

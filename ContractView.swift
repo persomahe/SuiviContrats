@@ -189,8 +189,13 @@ private struct ContractRow: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Text("Anniversaire : \(contract.anniversaryDate.formatted(date: .abbreviated, time: .omitted)) - Périodicité : \(contract.periodicityYears) an\(contract.periodicityYears == 1 ? "" : "s") - Préavis de : \(contract.cancellationNoticeMonths) mois")
-                .font(.caption)
+            if contract.periodicityYears == 1 {
+                Text("Anniversaire : \(contract.anniversaryDate.formatted(date: .abbreviated, time: .omitted)) - Préavis de : \(contract.cancellationNoticeMonths) mois")
+                    .font(.caption)
+            } else {
+                Text("Anniversaire : \(contract.anniversaryDate.formatted(date: .abbreviated, time: .omitted)) - Périodicité : \(contract.periodicityYears) ans - Préavis de : \(contract.cancellationNoticeMonths) mois")
+                    .font(.caption)
+            }
 
             if contract.amount > 0 {
                 Text(String(format: "%.2f %@", contract.amount, contract.amountType.unit))
